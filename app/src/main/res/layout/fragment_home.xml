@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="com.soethihatun.photogallery.features.home.HomeViewModel" />
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:onRefreshListener="@{viewModel::refresh}"
+        app:refreshing="@{viewModel.dataLoading}">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".features.home.HomeFragment">
+
+            <ImageView
+                android:id="@+id/ivGridView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:src="@drawable/ic_baseline_grid_on_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{() -> viewModel.setGridView()}"
+                android:contentDescription="@string/fragment_home_view_grid_button_description" />
+
+            <ImageView
+                android:id="@+id/ivListView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:src="@drawable/ic_baseline_view_list_24"
+                app:layout_constraintEnd_toStartOf="@id/ivGridView"
+                app:layout_constraintTop_toTopOf="@id/ivGridView"
+                android:onClick="@{() -> viewModel.setListView()}"
+                android:contentDescription="@string/fragment_home_view_list_button_description" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPhotos"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/margin_large"
+                android:orientation="vertical"
+                app:photoItems="@{viewModel.photos}"
+                app:photoSpanCount="@{viewModel.spanCount}"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivGridView"
+                android:visibility="@{viewModel.isEmpty ? View.GONE : View.VISIBLE}"
+                tools:visibility="visible"
+                tools:itemCount="20"
+                tools:listitem="@layout/item_photo" />
+
+            <LinearLayout
+                android:id="@+id/llEmpty"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="@{viewModel.isEmpty ? View.VISIBLE : View.GONE}"
+                tools:visibility="gone">
+
+                <ImageView
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@drawable/ic_baseline_image_24"
+                    android:contentDescription="@string/home_no_photo_image_description" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_no_photo_label"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline5"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</layout>

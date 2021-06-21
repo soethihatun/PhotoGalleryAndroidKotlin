@@ -1,0 +1,146 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'dagger.hilt.android.plugin'
+
+configurations {
+    ktlint
+}
+
+def apiKeyPropertiesFile = rootProject.file("apikey.properties")
+def apiKeyProperties = new Properties()
+apiKeyProperties.load(new FileInputStream(apiKeyPropertiesFile))
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.soethihatun.photogallery"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'BASE_URL', '"https://api.unsplash.com/"'
+        buildConfigField 'String', 'UNSPLASH_ACCESS_KEY', apiKeyProperties['UNSPLASH_ACCESS_KEY']
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+}
+
+dependencies {
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+
+    // ktx
+    implementation "androidx.core:core-ktx:$ktxVersion"
+
+    // App dependencies
+    implementation "androidx.appcompat:appcompat:$appCompatVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "androidx.cardview:cardview:$cardVersion"
+    implementation "androidx.annotation:annotation:$androidXAnnotations"
+    implementation "androidx.legacy:legacy-support-v4:$androidXLegacySupport"
+
+    implementation "androidx.preference:preference-ktx:$preferenceVersion"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    implementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
+
+    // Fragment
+    implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+
+    // Dev dependencies
+    implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    // Linting
+    ktlint "com.pinterest:ktlint:$ktlinter"
+
+    // Architecture Components
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensions"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleCommonJava8"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleKtx"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleKtx"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleKtx"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleKtx"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+
+    // Navigation
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-runtime-ktx:$archLifecycleVersion"
+
+    // Dagger Hilt
+    implementation "com.google.dagger:hilt-android:$daggerHiltVersion"
+    kapt "com.google.dagger:hilt-android-compiler:$daggerHiltVersion"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltLifecycleVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltLifecycleVersion"
+
+    // Network
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$loggingInterceptorVersion"
+
+    // Image Loading
+    implementation "com.github.bumptech.glide:glide:$glide"
+    kapt "com.github.bumptech.glide:compiler:$glide"
+
+    // Dependencies for local unit tests
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+    testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+
+    androidTestImplementation "androidx.test.ext:junit:$androidXTestJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+
+    // AndroidX Test - JVM testing
+    testImplementation "androidx.test:core-ktx:$androidXTestCoreVersion"
+    testImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
+    testImplementation "androidx.test:rules:$androidXTestRulesVersion"
+}
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "src/**/*.kt"
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "-F", "src/**/*.kt"
+}

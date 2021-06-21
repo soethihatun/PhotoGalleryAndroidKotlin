@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Photo Gallery</string>
+    <string name="home_no_photo_label">No photo</string>
+    <string name="home_no_photo_image_description">No Photo Image</string>
+    <string name="menu_home_search_title">Search</string>
+    <string name="fragment_search_photo_label">Search Photo</string>
+    <string name="fragment_search_search_photo_hint">Search photo</string>
+    <string name="fragment_home_view_grid_button_description">View Grid Button</string>
+    <string name="fragment_home_view_list_button_description">View List Button</string>
+</resources>
